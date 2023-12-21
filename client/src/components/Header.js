@@ -4,19 +4,12 @@ import styled from "styled-components";
 const Header = () => {
     return (
         <StyledNav>
-            <Link to={"/"}><h1>project transparency</h1></Link>
-            <Link to={"/signin"}>sign in</Link>
-            <Link to={"/list"}>list</Link>
-            <Link to={"/vote"}>vote</Link>
+            <p>online-directory</p>
         </StyledNav>
     );
 }
 
 const StyledNav = styled.nav`
-    background-color: lightblue;
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
+    border: 1px dashed blue;
 `
-
 export default Header;
