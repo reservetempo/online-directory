@@ -3,6 +3,9 @@ const app = express();
 const morgan = require("morgan");
 const createDirectory = require('./handlers/createDirectory');
 const getDirectory = require('./handlers/getDirectory');
+const addImage = require('./handlers/addImage');
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 const PORT = process.env.PORT || 4000;
 
 app.use(function (req, res, next) {
@@ -24,6 +27,8 @@ app.use("/", express.static(__dirname + "/"))
 
 app.get('/directories/:id', getDirectory);
 app.post('/directories', createDirectory);
+
+app.post('/images', upload.single('image'), addImage)
 
 app.get('/', (req, res) => {
   console.log("hello")
