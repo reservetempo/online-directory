@@ -5,6 +5,8 @@ const createDirectory = require('./handlers/createDirectory');
 const getDirectory = require('./handlers/getDirectory');
 const addImage = require('./handlers/addImage');
 const multer = require('multer');
+const getUsernames = require('./handlers/getDirectories');
+const { auth } = require('express-oauth2-jwt-bearer');
 const upload = multer({ dest: 'uploads/' });
 const PORT = process.env.PORT || 4000;
 
@@ -26,11 +28,13 @@ app.use(express.urlencoded({ extended: false }))
 app.use("/", express.static(__dirname + "/"))
 
 app.get('/directories/:id', getDirectory);
+app.get('/directories', getUsernames);
 app.post('/directories', createDirectory);
 
 app.post('/images', upload.single('image'), addImage)
 
 app.get('/', (req, res) => {
+  console.log(req.auth);
   console.log("hello")
   res.status(200).json({status: 200, message: "heelo! "});
 });

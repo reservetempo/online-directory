@@ -4,12 +4,21 @@ const { MONGO_URI } = process.env;
 
 const createDirectory = async (req, res) => {
   const client = new MongoClient(MONGO_URI);
+  const username  = req.body.username;
+
+  const userDocument = {
+    _id: req.body.email,
+    username: username,
+    userObj: {
+      [username]: {}
+    }
+  }
 
   try {
     await client.connect();
     const db = client.db('directories');
 
-    const result = await db.collection('directories').insertOne(req.body);
+    const result = await db.collection('directories').insertOne(userDocument);
 
     result.insertedId ? 
     res.status(201).json({ status: 201, insertedId: result.insertedId, message: "created directory!"}) :
