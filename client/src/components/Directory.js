@@ -31,6 +31,7 @@ const Directory = () => {
 
     const getUserObj = async () => {
         const result = await makeFetchRequest(() => getDirectory(folders[0]));
+        console.log(result)
         console.log(result.data.userObj)
         setUserObj(result.data.userObj)
     };
