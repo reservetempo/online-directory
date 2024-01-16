@@ -2,18 +2,19 @@ import styled from "styled-components";
 import makeFetchRequest from "../utils/make-fetch-request";
 import { makeDirectory } from "../service/handlePost";
 import { useRef } from "react";
+import { useCurrentUser } from "./UserContext";
 
-const CreateDirectory = ({userEmail, setHasAccount, getUsers}) => {
+const CreateDirectory = ({userEmail, getUsers}) => {
     const usernameRef = useRef(null);
+    const { setCheckedAccount, updateCurrentUser } = useCurrentUser();
 
     const handleSubmit = async (ev) => {
         ev.preventDefault();
-        console.log({username: usernameRef.current.value, email: userEmail})
 
         const result = await makeFetchRequest(
             () => makeDirectory({username: usernameRef.current.value, email: userEmail}));
-        
-        setHasAccount(true);
+        setCheckedAccount(true);
+        updateCurrentUser(usernameRef.current.value)
         getUsers();
     }
 

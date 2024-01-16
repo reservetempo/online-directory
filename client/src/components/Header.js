@@ -13,5 +13,8 @@ const Header = () => {
 
 const StyledNav = styled.nav`
     border: 1px dashed blue;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
 `
 export default Header;

@@ -1,21 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react'
 import makeFetchRequest from '../utils/make-fetch-request';
-import { addProduct, getProducts } from '../service/handleProducts';
+import { addImage, getImages } from '../service/handleImages';
 
-const ImageUpload = () => {
-    const [images, setImages] = useState([]);
+const ImageUpload = ({pathArray}) => {
+    const [addingImg, setAddingImg] = useState(false);
     const [image, setImage] = useState();
     const formRef = useRef();
 
     const getData = async () => {
-        const res = await makeFetchRequest(() => getProducts());
-        console.log(res)
-        const urls = res.data.map(bi => {
-            const blob = new Blob([bi], {type: 'image/jpeg'});
-            return URL.createObjectURL(blob);
-        })
-        console.log(urls)
-        setImages(urls)
+    
     }
 
     useEffect(() => {
@@ -24,23 +17,27 @@ const ImageUpload = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         const formData = new FormData();
         formData.append('image', image);
-        // for (let [key, value] of formData.entries()) {
-        //     console.log(`${key}:`, value);
-        // }
-        const res = await makeFetchRequest(() => addProduct(formData))
-        // console.log(res)
+
+        const res = await makeFetchRequest(() => addImage(formData, pathArray.join("-")))
     }
+    
   return (
     <div>
-        <h1>upload product form</h1>
+        {addingImg ? 
+        <>
         <form onSubmit={e => handleSubmit(e)} ref={formRef}>
-        <label>Image
+            <label>
                 <input type="file" name="image" onChange={e => setImage(e.target.files[0])}/>
-        </label>
-        <button type="submit">Submit</button>
-        </form>
+            </label>
+            <button type="submit">Submit</button>
+        </form> 
+        <button onClick={() => setAddingImg(!addingImg)}>cancel</button> 
+        </> :
+        <button onClick={() => setAddingImg(!addingImg)}>add image / text</button>
+        }
         {/* {images && images.map(e => {
             return (
                 <img src={e} />
