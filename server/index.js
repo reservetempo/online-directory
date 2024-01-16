@@ -33,7 +33,7 @@ app.get('/directories', getUsernames);
 app.post('/directories', createDirectory);
 app.patch('/directories/:id', updateSubdirectory);
 
-app.post('/images', upload.single('image'), addImage)
+app.post('/images/:branch', upload.single('image'), addImage)
 
 app.get('/', (req, res) => {
   console.log(req.auth);

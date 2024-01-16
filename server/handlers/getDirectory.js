@@ -15,12 +15,12 @@ const getDirectory = async (req, res) => {
         const result = await db.collection('directories').findOne({_id: id});
 
         result ?
-        res.status(200).json({status: 200, result: true}) :
+        res.status(200).json({status: 200, result: result.username}) :
         res.status(400).json({status: 400, result: false})
     }
     else {
         const result = await db.collection('directories').findOne({username: id});
-
+        console.log(result)
         result ? 
         res.status(200).json({status: 200, data: result}) :
         res.status(400).json({status: 400, message: "could not get directory"})

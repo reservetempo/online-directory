@@ -13,7 +13,7 @@ const getUsernames = async (req, res) => {
     const dirs = await db.collection('directories').find().toArray();
 
     result ? 
-    res.status(200).json({status: 200, dirs, result}) :
+    res.status(200).json({status: 200, result}) :
     res.status(400).json({status: 400, message: "could not get users"})
   } catch (err) {
     console.log(err);

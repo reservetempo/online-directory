@@ -5,6 +5,7 @@ const { MONGO_URI } = process.env;
 const updateSubdirectory = async (req, res) => {
   const client = new MongoClient(MONGO_URI);
   const {id}  = req.params;
+  // newSubdir is adding, subdir is deleting 
   const {path, newSubdir, subdir} = req.body;
 
   try {
@@ -13,7 +14,7 @@ const updateSubdirectory = async (req, res) => {
 
     const filter = {"username": id};
     const keyToUpdate = newSubdir ? `userObj.${path.join(".")}.${newSubdir}` : `userObj.${path.join(".")}.${subdir}`;
-    const update = newSubdir ? {$set: {[keyToUpdate]: {}}} : {$unset: {[keyToUpdate] : ""}};
+    const update = newSubdir ? {$set: {[keyToUpdate]: {[`-${newSubdir}`]: []}}} : {$unset: {[keyToUpdate] : ""}};
 
     const updatedResult = await db.collection('directories').updateOne(filter, update);
 
@@ -24,13 +25,6 @@ const updateSubdirectory = async (req, res) => {
     updatedResult.modifiedCount ? 
     res.status(200).json({ status: 200, path, newSubdir, message: "updated subdirectory!"}) :
     res.status(400).json({ status: 400, path, newSubdir, message: "could not update subdirectory"})
-    // if (subdir) {
-    //   const keyToUpdate = `userObj.${path.join(".")}.${subdir}`;
-    //   const update = {$unset: {[keyToUpdate] : ""}}
-
-    //   const deletedResult = await db.collection('directories').updateOne(filter, update);
-    //   console.log(deletedResult)
-    // }
   } catch (err) {
     console.log(err);
     res.status(500).json({ status: 500, message: "internal server error" });

@@ -11,18 +11,27 @@ cloudinary.config({
 
 const addImage = async (req, res) => {
   const client = new MongoClient(MONGO_URI);
+  const pathArray = req.params.branch.split("-");
 
   try {
     await client.connect();
-    const db = client.db("wearables");
+    const db = client.db("directories");
 
     const result = await cloudinary.uploader.upload(req.file.path);
-    console.log(result.url)
-    
-    result.url 
-    ? res.status(200).json({status: 200, message: "added Product!"})
-    : res.status(401).json({status: 401, message: "Could not add product"})
-    
+
+    if (!result.url) {
+      return res.status(401).json({status: 401, message: "Could not add image"})
+    } 
+    else {
+      const filter = {"username": pathArray[0]};
+      const keyToUpdate = `userObj.${req.params.branch}.-${pathArray[pathArray.length -1]}`
+      const update = {$push: {[keyToUpdate]: result.url}}
+
+      const updatedResult = await db.collection('directories').updateOne(filter, update);
+      updatedResult.modifiedCount 
+      ? res.status(200).json({status: 200, message: "added image!"})
+      : res.status(401).json({status: 401, message: "Could not add image"})
+    }
   } catch (err) {
     console.log(err);
     res.status(500).json({ status: 500, message: "internal server error" });

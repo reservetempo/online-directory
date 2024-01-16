@@ -5,12 +5,15 @@ const { MONGO_URI } = process.env;
 const createDirectory = async (req, res) => {
   const client = new MongoClient(MONGO_URI);
   const username  = req.body.username;
+  // const filesName = `-${username}`;
 
   const userDocument = {
     _id: req.body.email,
     username: username,
     userObj: {
-      [username]: {}
+      [username]: {
+        [`-${username}`]: []
+      }
     }
   }
 
