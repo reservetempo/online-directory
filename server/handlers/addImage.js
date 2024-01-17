@@ -18,14 +18,14 @@ const addImage = async (req, res) => {
     const db = client.db("directories");
 
     const result = await cloudinary.uploader.upload(req.file.path);
-
+console.log(result)
     if (!result.url) {
       return res.status(401).json({status: 401, message: "Could not add image"})
     } 
     else {
       const filter = {"username": pathArray[0]};
       const keyToUpdate = `userObj.${req.params.branch}.-${pathArray[pathArray.length -1]}`
-      const update = {$push: {[keyToUpdate]: result.url}}
+      const update = {$push: {[keyToUpdate]: { imgSrc: result.url, publicId: result.public_id}}}
 
       const updatedResult = await db.collection('directories').updateOne(filter, update);
       updatedResult.modifiedCount 
