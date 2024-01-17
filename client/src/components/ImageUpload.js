@@ -1,27 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react'
 import makeFetchRequest from '../utils/make-fetch-request';
 import { addImage, getImages } from '../service/handleImages';
+import { useCurrentUser } from "./UserContext";
 
 const ImageUpload = ({pathArray}) => {
     const [addingImg, setAddingImg] = useState(false);
     const [image, setImage] = useState();
     const formRef = useRef();
-
-    const getData = async () => {
-    
-    }
-
-    useEffect(() => {
-        // getData();
-    }, [])
+    const { getToken } = useCurrentUser();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        const token = await getToken();
         const formData = new FormData();
         formData.append('image', image);
 
-        const res = await makeFetchRequest(() => addImage(formData, pathArray.join("-")))
+        const res = await makeFetchRequest(() => addImage(formData, pathArray.join("-"), token))
     }
     
   return (
@@ -38,12 +32,6 @@ const ImageUpload = ({pathArray}) => {
         </> :
         <button onClick={() => setAddingImg(!addingImg)}>add image / text</button>
         }
-        {/* {images && images.map(e => {
-            return (
-                <img src={e} />
-            )
-        })} */}
-
     </div>
   )
 }

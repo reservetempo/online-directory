@@ -6,13 +6,13 @@ import { useCurrentUser } from "./UserContext";
 
 const CreateDirectory = ({userEmail, getUsers}) => {
     const usernameRef = useRef(null);
-    const { setCheckedAccount, updateCurrentUser } = useCurrentUser();
+    const { setCheckedAccount, updateCurrentUser, getToken } = useCurrentUser();
 
     const handleSubmit = async (ev) => {
         ev.preventDefault();
-
+        const token = await getToken();
         const result = await makeFetchRequest(
-            () => makeDirectory({username: usernameRef.current.value, email: userEmail}));
+            () => makeDirectory({username: usernameRef.current.value, email: userEmail}, token));
         setCheckedAccount(true);
         updateCurrentUser(usernameRef.current.value)
         getUsers();

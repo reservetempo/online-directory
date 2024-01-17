@@ -1,18 +1,23 @@
 import { useRef, useState } from "react";
 import makeFetchRequest from "../utils/make-fetch-request";
 import { updateDirectory } from "../service/handlePatch";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const UpdateDirectory = ({pathArray, getUserObj}) => {
     const [isAdding, setIsAdding] = useState(false);
     const nameRef = useRef(null);
+    const { user, isAuthenticated, getAccessTokenSilently} = useAuth0();
+
 
     const handleSubmit = async (ev) => {
+        const token = await getAccessTokenSilently();
+        
         ev.preventDefault();
         const updateObject = {
             path: pathArray,
             newSubdir: nameRef.current.value
         };
-        const result = await makeFetchRequest(() => updateDirectory(pathArray[0], updateObject));
+        const result = await makeFetchRequest(() => updateDirectory(pathArray[0], updateObject, token));
         setIsAdding(!isAdding);
         getUserObj();
     }

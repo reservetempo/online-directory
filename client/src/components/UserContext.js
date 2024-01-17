@@ -7,7 +7,7 @@ export const UserContext = createContext(null);
 export const useCurrentUser = () => useContext(UserContext);
 
 export const UserProvider = ({ children }) => {
-    const { user, isAuthenticated } = useAuth0();
+    const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
     const [checkedAccount, setCheckedAccount] = useState(false);
 
     // when setting current user how to unset when timed out?
@@ -39,6 +39,9 @@ export const UserProvider = ({ children }) => {
         }
         setCheckedAccount(true);
     }
+    const getToken = async () => {
+        return await getAccessTokenSilently();
+    }
 
     useEffect(() => {
         if (user) {
@@ -50,7 +53,7 @@ export const UserProvider = ({ children }) => {
     }, [user])
 
   return (
-    <UserContext.Provider value={{ currentUser, updateCurrentUser, checkedAccount, setCheckedAccount }}>
+    <UserContext.Provider value={{ currentUser, updateCurrentUser, checkedAccount, setCheckedAccount, getToken }}>
         {children}
     </UserContext.Provider>
   );

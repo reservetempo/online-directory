@@ -12,6 +12,7 @@ const Homepage = () => {
     const { currentUser, checkedAccount } = useCurrentUser();
 
     const getUsers = async () => {
+
         const result = await makeFetchRequest(() => getDirectories());
         setUsers(result.result)
     };
@@ -19,7 +20,7 @@ const Homepage = () => {
     useEffect(() => {
         getUsers();
     }, [])
-console.log(isAuthenticated, currentUser, checkedAccount)
+
     return (
         <main>
             {isAuthenticated && !currentUser && checkedAccount &&

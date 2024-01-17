@@ -9,7 +9,7 @@ import { useCurrentUser } from "./UserContext";
 import UpdateDirectory from "./UpdateDirectory";
 import { updateDirectory } from "../service/handlePatch";
 import ImageUpload from "./ImageUpload";
-
+import { deleteImage } from "../service/handleDelete";
 
 const enterFolder = (obj, path) => {
     const keys = path;
@@ -29,8 +29,10 @@ const Directory = () => {
     const params = useParams();
     const pathArray = Object.values(params);
     const [userObj, setUserObj] = useState(null);
-    const { currentUser } = useCurrentUser();
+    const { currentUser, getToken } = useCurrentUser();
     const isThisUser = currentUser === pathArray[0];
+    const [isEditing, setIsEditing] = useState(false);
+
     
     const getUserObj = async () => {
         const result = await makeFetchRequest(() => getDirectory(pathArray[0]));
@@ -48,12 +50,23 @@ const Directory = () => {
 
     const handleDelete = async (ev, subdir) => {
         ev.preventDefault();
-
+        const token = await getToken();
         const updateObject = {
             path: pathArray,
             subdir: subdir
         };
-        const result = await makeFetchRequest(() => updateDirectory(pathArray[0], updateObject));
+        const result = await makeFetchRequest(() => updateDirectory(pathArray[0], updateObject, token));
+        getUserObj();
+    }
+
+    const handleDeleteImg = async (ev, publicId) => {
+        ev.preventDefault();
+        const token = await getToken();
+        const updateObject = {
+            pathArray: pathArray,
+            publicId: publicId
+        };
+        const result = await makeFetchRequest(() => deleteImage(updateObject, token));
         getUserObj();
     }
 
@@ -85,13 +98,14 @@ const Directory = () => {
                         console.log({e})
                         return (
                             <li key={e}>file: 
-                                <img src={e} style={{height: "20px"}}/> 
+                                <img src={e.imgSrc} style={{height: "20px"}}/>
+                                {isEditing && <button onClick={(ev) => handleDeleteImg(ev, e.publicId)}>-</button>}
                             </li>
                         )
                     }) :
                     <li key={e}>
                         <Link to={`/${pathArray.length ? pathArray.join("/")+ "/" + e : e}`}>> {e} </Link>
-                        {isThisUser && <button onClick={(ev) => handleDelete(ev, e)}>-</button>}
+                        {isEditing && <button onClick={(ev) => handleDelete(ev, e)}>-</button>}
                     </li>
                     } 
                     </>
@@ -99,11 +113,12 @@ const Directory = () => {
                 )
             })}
             
-            {isThisUser && <UpdateDirectory pathArray={pathArray} getUserObj={getUserObj}/>}
+            {isEditing && <UpdateDirectory pathArray={pathArray} getUserObj={getUserObj}/>}
             </>
             }
             </ul>
-            {isThisUser && <ImageUpload pathArray={pathArray} />}
+            {isEditing && <ImageUpload pathArray={pathArray} />}
+            {isThisUser && <button onClick={() => setIsEditing(!isEditing)}>{isEditing ? "stop edit" : "edit"}</button>}
         </StyledWrapper>
     );
 }
