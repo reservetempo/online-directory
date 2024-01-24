@@ -7,7 +7,7 @@ const updateSubdirectory = async (req, res) => {
   const {id}  = req.params;
   // newSubdir is adding, subdir is deleting 
   const {path, newSubdir, subdir} = req.body;
-
+  
   try {
     await client.connect();
     const db = client.db('directories');
