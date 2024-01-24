@@ -10,8 +10,25 @@ export const UserProvider = ({ children }) => {
     const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
     const [checkedAccount, setCheckedAccount] = useState(false);
 
-    // when setting current user how to unset when timed out?
-    // will it work if instance is not running?
+    const [currentDirectory, setCurrentDirectory] = useState(() => {
+        const data = window.sessionStorage.getItem("currentDirectory");
+        if (data) {
+            return JSON.parse(data);
+        } else {
+            return null;
+        }
+    });
+
+    const updateCurrentDirectory= (currentDirectory) => {
+        window.sessionStorage.setItem("currentDirectory", JSON.stringify(currentDirectory));
+        setCurrentDirectory(currentDirectory);
+    };
+
+    const removeCurrentDirectory = () => {
+        window.sessionStorage.removeItem("currentDirectory");
+        setCurrentDirectory(null);
+    };
+
     const [currentUser, setCurrentUser] = useState(() => {
         const data = window.sessionStorage.getItem("username");
         if (data) {
@@ -53,7 +70,15 @@ export const UserProvider = ({ children }) => {
     }, [user])
 
   return (
-    <UserContext.Provider value={{ currentUser, updateCurrentUser, checkedAccount, setCheckedAccount, getToken }}>
+    <UserContext.Provider value={
+        { currentDirectory, 
+        updateCurrentDirectory, 
+        currentUser, 
+        updateCurrentUser, 
+        checkedAccount, 
+        setCheckedAccount, 
+        getToken }
+        }>
         {children}
     </UserContext.Provider>
   );

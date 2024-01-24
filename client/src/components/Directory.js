@@ -4,48 +4,59 @@ import styled from "styled-components";
 import makeFetchRequest from "../utils/make-fetch-request";
 import { getDirectory } from "../service/handleGet";
 import { useEffect, useState } from "react";
-// import ImageUpload from "./ImageUpload";
+import ImageViewer from "./ImageViewer";
 import { useCurrentUser } from "./UserContext";
 import UpdateDirectory from "./UpdateDirectory";
 import { updateDirectory } from "../service/handlePatch";
 import ImageUpload from "./ImageUpload";
 import { deleteImage } from "../service/handleDelete";
 
-const enterFolder = (obj, path) => {
-    const keys = path;
-    let current = obj;
-
-    for (let key of keys) {
-        if (current[key] !== undefined) {
-            current = current[key];
-        } else {
-            return undefined;
-        }
-    }
-    return current;
-}
-
 const Directory = () => {
     const params = useParams();
     const pathArray = Object.values(params);
-    const [userObj, setUserObj] = useState(null);
-    const { currentUser, getToken } = useCurrentUser();
+    const { currentUser, getToken, currentDirectory, updateCurrentDirectory } = useCurrentUser();
     const isThisUser = currentUser === pathArray[0];
     const [isEditing, setIsEditing] = useState(false);
+    const [image, setImage] = useState(null);
 
+    const enterFolder = (obj, path) => {
+        const keys = path;
+        let current = obj;
+    console.log("THIS OBJ", obj)
+        for (let key of keys) {
+            if (current[key] !== undefined) {
+                current = current[key];
+                // console.log("CURRENT: ", current[key])
+            } 
+            else if (key[key.length -1] === ".") {
+                console.log("CURRENT IMAGE", current[`-${path[path.length -2]}`])
+                const img = current[`-${path[path.length -2]}`].find(e => e.title === key)
+                if (!image) setImage(img)
+            }
+            else {
+                console.log("DONE: ", current)
+                return undefined;
+            }
+        }
+        return current;
+    }
     
     const getUserObj = async () => {
         const result = await makeFetchRequest(() => getDirectory(pathArray[0]));
-        setUserObj(result.data.userObj)
+        updateCurrentDirectory(result.data.userObj)
+        console.log(result.data.userObj)
     };
 
     useEffect(() => {
-        getUserObj();
+        if (!currentDirectory || !currentDirectory[pathArray[0]]) {
+            getUserObj();
+        }
     }, [])
 
     let currentFolder;
-    if (userObj) {
-        currentFolder = enterFolder(userObj, pathArray);
+    if (currentDirectory) {
+        currentFolder = enterFolder(currentDirectory, pathArray);
+        // if its image/ fetch url
     }
 
     const handleDelete = async (ev, subdir) => {
@@ -85,24 +96,28 @@ const Directory = () => {
             })}
 
             <ul>
-            {userObj && 
-            // --- DISPLAY FOLDERS ---
+            {params && pathArray[pathArray.length -1][pathArray[pathArray.length -1].length -1] === "." ?
+            // --- DISPLAY IMAGE --- 
+            <ImageViewer image={image} /> :
+            
+            currentDirectory && 
             <>
-            {Object.keys(currentFolder).map(e => {
+            {currentFolder &&
+            Object.keys(currentFolder).map(e => {
                 return (
                     <>
                     {e[0] === "-" ? 
             // --- DISPLAY FILES --- 
-            // make a component? FileView
                     currentFolder[e].map(e => {
-                        console.log({e})
                         return (
-                            <li key={e}>file: 
+                            <li key={e}>
                                 <img src={e.imgSrc} style={{height: "20px"}}/>
+                                <Link to={`/${pathArray.length ? pathArray.join("/")+ "/" + e.title : e.title}`}>{e.title}</Link>
                                 {isEditing && <button onClick={(ev) => handleDeleteImg(ev, e.publicId)}>-</button>}
                             </li>
                         )
                     }) :
+            // --- DISPLAY FOLDERS ---
                     <li key={e}>
                         <Link to={`/${pathArray.length ? pathArray.join("/")+ "/" + e : e}`}>> {e} </Link>
                         {isEditing && <button onClick={(ev) => handleDelete(ev, e)}>-</button>}
@@ -113,12 +128,17 @@ const Directory = () => {
                 )
             })}
             
-            {isEditing && <UpdateDirectory pathArray={pathArray} getUserObj={getUserObj}/>}
+            {isEditing && 
+            <>
+                <UpdateDirectory pathArray={pathArray} getUserObj={getUserObj}/>
+                <ImageUpload pathArray={pathArray} getUserObj={getUserObj} />
+            </>
+            }
+            {isThisUser && <button onClick={() => setIsEditing(!isEditing)}>{isEditing ? "stop edit" : "edit"}</button>}
             </>
             }
             </ul>
-            {isEditing && <ImageUpload pathArray={pathArray} />}
-            {isThisUser && <button onClick={() => setIsEditing(!isEditing)}>{isEditing ? "stop edit" : "edit"}</button>}
+
         </StyledWrapper>
     );
 }

@@ -1,9 +1,10 @@
 export const addImage = async (formData, branch, token) => {
+    console.log(formData.path)
+    console.log(token)
     const result = await fetch(`/images/${branch}`, {
         method: "POST",
         headers: {
             "Accept": "application/json",
-            "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
         },
         body: formData
