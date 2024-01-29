@@ -1,30 +1,48 @@
-const { MongoClient, ObjectId, Binary } = require("mongodb");
+const { MongoClient} = require("mongodb");
 const cloudinary = require('cloudinary');
 require("dotenv").config();
-const { MONGO_URI } = process.env;
+const { MONGO_URI, CLOUD_NAME, API_KEY, API_SECRET } = process.env;
 
 cloudinary.config({ 
-  cloud_name: 'dfycy5fbx', 
-  api_key: '896929384252848', 
-  api_secret: 'qk_8dH0k-GuPpohlVWkM5LQ7-44' 
+  cloud_name: CLOUD_NAME, 
+  api_key: API_KEY, 
+  api_secret: API_SECRET 
 });
 
 const addImage = async (req, res) => {
   const client = new MongoClient(MONGO_URI);
-
+  const pathArray = req.params.branch.split("-");
+  
   try {
     await client.connect();
-    const db = client.db("wearables");
+    const db = client.db("directories");
 
-    // cloudinary.v2.uploader.upload("https://upload.wikimedia.org/wikipedia/commons/a/ae/Olympic_flag.jpg",
-    // { public_id: "olympic_flag" }, 
-    // function(error, result) {console.log(result); });
-    const result = await cloudinary.uploader.upload(req.file.path);
-    console.log(result.url)
-    result.url 
-    ? res.status(200).json({status: 200, message: "added Product!"})
-    : res.status(401).json({status: 401, message: "Could not add product"})
-    
+    const imageUrl = req.file.path;
+    const publicId = req.file.filename;
+
+    if (!imageUrl) {
+      return res.status(401).json({status: 401, message: "Could not add image"})
+    } 
+    else {
+      const title = req.body.title;
+
+      const filter = {"username": pathArray[0]};
+      const keyToUpdate = `userObj.${pathArray.join(".")}.-${pathArray[pathArray.length -1]}`
+      const update = {
+        $push: {
+          [keyToUpdate]: { 
+            title: title,
+            imgSrc: imageUrl, 
+            publicId: publicId
+          }
+        }
+      }
+      const updatedResult = await db.collection('directories').updateOne(filter, update);
+
+      updatedResult.modifiedCount 
+      ? res.status(200).json({status: 200, message: "added image!"})
+      : res.status(401).json({status: 401, message: "Could not add image"})
+    }
   } catch (err) {
     console.log(err);
     res.status(500).json({ status: 500, message: "internal server error" });

@@ -5,13 +5,17 @@ import Signin from "./Signin";
 const Header = () => {
     return (
         <StyledNav>
-            <p>online-directory</p>
+            <Link to="/">online-directory</Link>
             <Signin />
         </StyledNav>
     );
 }
 
 const StyledNav = styled.nav`
-    border: 1px dashed blue;
+    border: 1px solid var(--primary);
+    margin: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
 `
 export default Header;

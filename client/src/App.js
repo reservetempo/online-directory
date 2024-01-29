@@ -5,6 +5,7 @@ import Signin from "./components/Signin";
 import Directory from "./components/Directory"
 import NotFound from "./components/NotFound";
 import { UserProvider } from "./components/UserContext";
+import GlobalStyles from "./components/GlobalStyles";
 
 const App = () => {
 
@@ -12,6 +13,7 @@ const App = () => {
     <div className="App">
         <UserProvider>
           <Router>
+            <GlobalStyles />
             <Header />
             <Routes>
               <Route path="/" element={<Homepage />} />
