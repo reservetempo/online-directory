@@ -12,11 +12,13 @@ cloudinary.config({
 const addImage = async (req, res) => {
   const client = new MongoClient(MONGO_URI);
   const pathArray = req.params.branch.split("-");
-
+  
   try {
     await client.connect();
     const db = client.db("directories");
+
     const imageUrl = req.file.path;
+    const publicId = req.file.filename;
 
     if (!imageUrl) {
       return res.status(401).json({status: 401, message: "Could not add image"})
@@ -31,7 +33,7 @@ const addImage = async (req, res) => {
           [keyToUpdate]: { 
             title: title,
             imgSrc: imageUrl, 
-            publicId: req.file.public_id
+            publicId: publicId
           }
         }
       }

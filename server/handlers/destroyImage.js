@@ -12,7 +12,7 @@ cloudinary.config({
 const destroyImage = async (req, res) => {
     const client = new MongoClient(MONGO_URI);
     const { pathArray, publicId } = req.body;
-    
+
     try {
         await client.connect();
         const db = client.db("directories");
