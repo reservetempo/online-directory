@@ -13,13 +13,14 @@ const ImageUpload = ({pathArray, getUserObj}) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         const token = await getToken();
         const title = nameRef.current.value + ".";
         const formData = new FormData();
         formData.append('title', title);
         formData.append('image', image);
+        
         const res = await makeFetchRequest(() => addImage(formData, pathArray.join("-"), token))
-    console.log(res)
         getUserObj()
     }
     

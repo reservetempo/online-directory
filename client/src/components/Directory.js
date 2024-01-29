@@ -1,4 +1,3 @@
-// import { useAuth0 } from "@auth0/auth0-react";
 import { Link, useParams } from "react-router-dom";
 import styled from "styled-components";
 import makeFetchRequest from "../utils/make-fetch-request";
@@ -20,21 +19,19 @@ const Directory = () => {
     const [image, setImage] = useState(null);
 
     const enterFolder = (obj, path) => {
-        const keys = path;
         let current = obj;
-    console.log("THIS OBJ", obj)
-        for (let key of keys) {
+
+        for (let key of path) {
             if (current[key] !== undefined) {
                 current = current[key];
-                // console.log("CURRENT: ", current[key])
             } 
-            else if (key[key.length -1] === ".") {
-                console.log("CURRENT IMAGE", current[`-${path[path.length -2]}`])
+            else if (key.slice(-1) === ".") {
                 const img = current[`-${path[path.length -2]}`].find(e => e.title === key)
-                if (!image) setImage(img)
+                if (!image || image.title !== img.title) {
+                    setImage(img)
+                }
             }
             else {
-                console.log("DONE: ", current)
                 return undefined;
             }
         }
@@ -44,7 +41,6 @@ const Directory = () => {
     const getUserObj = async () => {
         const result = await makeFetchRequest(() => getDirectory(pathArray[0]));
         updateCurrentDirectory(result.data.userObj)
-        console.log(result.data.userObj)
     };
 
     useEffect(() => {
@@ -56,7 +52,6 @@ const Directory = () => {
     let currentFolder;
     if (currentDirectory) {
         currentFolder = enterFolder(currentDirectory, pathArray);
-        // if its image/ fetch url
     }
 
     const handleDelete = async (ev, subdir) => {
@@ -96,9 +91,15 @@ const Directory = () => {
             })}
 
             <ul>
-            {params && pathArray[pathArray.length -1][pathArray[pathArray.length -1].length -1] === "." ?
+            {params && 
+            pathArray[pathArray.length -1][pathArray[pathArray.length -1].length -1] === "." ?
             // --- DISPLAY IMAGE --- 
-            <ImageViewer image={image} /> :
+            <ImageViewer 
+            image={image} 
+            pathArray={pathArray} 
+            getUserObj={getUserObj} 
+            isThisUser={isThisUser}
+            /> :
             
             currentDirectory && 
             <>
@@ -110,7 +111,7 @@ const Directory = () => {
             // --- DISPLAY FILES --- 
                     currentFolder[e].map(e => {
                         return (
-                            <li key={e}>
+                            <li key={e.title}>
                                 <img src={e.imgSrc} style={{height: "20px"}}/>
                                 <Link to={`/${pathArray.length ? pathArray.join("/")+ "/" + e.title : e.title}`}>{e.title}</Link>
                                 {isEditing && <button onClick={(ev) => handleDeleteImg(ev, e.publicId)}>-</button>}

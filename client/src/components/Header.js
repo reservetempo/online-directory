@@ -5,7 +5,7 @@ import Signin from "./Signin";
 const Header = () => {
     return (
         <StyledNav>
-            <p>online-directory</p>
+            <Link to="/">online-directory</Link>
             <Signin />
         </StyledNav>
     );
