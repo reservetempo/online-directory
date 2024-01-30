@@ -80,31 +80,36 @@ const Directory = () => {
         <StyledWrapper>
             {
             // --- DISPLAY PATH ---
-            params && pathArray.map((e, i) => {
+            params && 
+            <StyledPath>
+            {pathArray.map((e, i) => {
                 const diff = pathArray.length - (i + 1);
-                return (
-                    diff ?
-                    <Link key={e} to={`/${pathArray.slice(0, -diff).join("/")}`}>{e} > </Link>
-                    :
-                    <span key={e}>{e} > </span>
-                )
+                    return (
+                        diff ?
+                        <Link key={e} to={`/${pathArray.slice(0, -diff).join("/")}`}>{e} > </Link>
+                        :
+                        <span key={e}>{e} > </span>
+                    )
             })}
-
-            <ul>
+            </StyledPath>
+            }
+            {/* <article> */}
             {params && 
             pathArray[pathArray.length -1][pathArray[pathArray.length -1].length -1] === "." ?
             // --- DISPLAY IMAGE --- 
             <ImageViewer 
-            image={image} 
-            pathArray={pathArray} 
-            getUserObj={getUserObj} 
-            isThisUser={isThisUser}
+                image={image} 
+                pathArray={pathArray} 
+                getUserObj={getUserObj} 
+                isThisUser={isThisUser}
             /> :
-            
+            // --- OR DISPLAY DIRECTORY ---
             currentDirectory && 
             <>
+            <StyledList>
             {currentFolder &&
             Object.keys(currentFolder).map(e => {
+                console.log(e[0] === "-" && e)
                 return (
                     <>
                     {e[0] === "-" ? 
@@ -128,17 +133,18 @@ const Directory = () => {
                     
                 )
             })}
-            
-            {isEditing && 
-            <>
-                <UpdateDirectory pathArray={pathArray} getUserObj={getUserObj}/>
-                <ImageUpload pathArray={pathArray} getUserObj={getUserObj} />
+            </StyledList>
+            {isEditing && <UpdateDirectory pathArray={pathArray} getUserObj={getUserObj}/>}
+            <StyledEditZone>
+                {isEditing && <ImageUpload pathArray={pathArray} getUserObj={getUserObj} />}
+                {isThisUser && 
+                // --- EDIT BUTTON ---
+                    <button onClick={() => setIsEditing(!isEditing)}>{isEditing ? "stop edit" : "edit"}</button>
+                }
+            </StyledEditZone>
             </>
             }
-            {isThisUser && <button onClick={() => setIsEditing(!isEditing)}>{isEditing ? "stop edit" : "edit"}</button>}
-            </>
-            }
-            </ul>
+            {/* </article> */}
 
         </StyledWrapper>
     );
@@ -149,6 +155,17 @@ const StyledWrapper = styled.main`
     color: white;
     width: 100vw;
     height: 100vh; */
+`
+const StyledPath = styled.div`
+    padding: 0.1rem 0.4rem;
+`
+const StyledList = styled.ul`
+    li {
+        margin: 0.3rem;
+    }
+`
+const StyledEditZone = styled.footer`
+    /* border: 1px solid; */
 `
 export default Directory;
 
