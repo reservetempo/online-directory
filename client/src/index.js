@@ -13,7 +13,7 @@ root.render(
         clientId={clientId}
         authorizationParams={{
           redirect_uri: window.location.origin,
-          audience: 'http://localhost:4000'
+          audience: 'https://online-directory-service.onrender.com'
         }}
         
       >
