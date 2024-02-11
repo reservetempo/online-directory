@@ -4,12 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import makeFetchRequest from "../utils/make-fetch-request";
 import { updateImage } from "../service/handleImages";
 import { getDescription } from "../service/handleGet";
+import Loading from './Loading';
 
-const ImageViewer = ({image, pathArray, getUserObj, isThisUser}) => {
+const ImageViewer = ({image, setImage, pathArray, getUserObj, isThisUser}) => {
     const textareaRef = useRef(null);
     const [text, setText] = useState(null);
-    const { getToken } = useCurrentUser();
-
+    const { getToken, currentDirectory } = useCurrentUser();
+    const [loading, setLoading] = useState(null);
 
     const getImgDescription = async () => {
         const id = image.descriptionId
@@ -25,22 +26,28 @@ const ImageViewer = ({image, pathArray, getUserObj, isThisUser}) => {
 
     const handleSubmit = async (ev) => {
         ev.preventDefault();
+        const textValue = textareaRef.current.value;
+        setLoading("Sending your text to the database")
         const token = await getToken();
-        const res = await makeFetchRequest(() => updateImage(pathArray.join("-"), textareaRef.current.value, token));
+        const res = await makeFetchRequest(() => updateImage(pathArray.join("-"),textValue , token));
+
         getUserObj();
+        setText(textValue);
+        setLoading(null);
     }
     return (
         <div>
-            <h1>{image.title}</h1>
+            <h4>{image.title}</h4>
             <StyledImg src={image.imgSrc} />
-            {!image.descriptionId && isThisUser && 
+            <Loading loading={loading}/>
+            {!image.descriptionId && isThisUser && !loading && !text &&
             <form onSubmit={(ev) => handleSubmit(ev)}>
                 <StyledTextarea ref={textareaRef}></StyledTextarea>
-                <button type="submit">submit</button>
+                <button type="submit" disabled={loading}>submit</button>
             </form>
             }
             {text && 
-            <p>{text}</p>
+            <pre>{text}</pre>
             }
         </div>
     )

@@ -13,10 +13,14 @@ const Header = () => {
 
 const StyledNav = styled.nav`
     border: 1px solid var(--primary);
-    margin: 3px;
-    padding: 0.2rem;
+    margin-bottom: 10px;
+    padding: 10px;
     display: flex;
     align-items: center;
     justify-content: space-around;
+    a {
+        text-decoration: none;
+        border-bottom: 1px solid white;
+    }
 `
 export default Header;
