@@ -5,13 +5,19 @@ export default createGlobalStyle`
     --secondary: #000;
 }
 
+.App {
+    max-width: 700px;
+    /* width: 100%; */
+    margin: 20px;
+}
+
 body, a{
     margin: 0;
     background-color: var(--secondary);
     color: var(--primary);
 }
 
-body, button {
+body, button, input {
     font-family: 'Courier New', Courier, monospace;
 }
 li {
@@ -19,9 +25,13 @@ li {
 }
 button{
     background-color: var(--secondary);
-    padding: 0.2rem;
-    border: 1px solid var(--primary);
+    cursor: pointer;
+    border: none;
     color: var(--primary);
+}
+button:hover, a:hover {
+    background-color: white;
+    color: black;
 }
 
 `;
