@@ -4,7 +4,7 @@ export const getDirectory = async (_id) => {
 };
 
 export const getDirectories = async () => {
-    const result = await fetch(`/directories`);
+    const result = await fetch(`https://online-directory-service.onrender.com/directories`);
     return await result.json();
 };
 
