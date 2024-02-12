@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const cors = require("cors");
 const morgan = require("morgan");
 const createDirectory = require('./handlers/createDirectory');
 const getDirectory = require('./handlers/getDirectory');
@@ -43,7 +44,11 @@ const jwtCheck = auth({
 
 app.use(morgan("tiny"))
 app.use(express.static("./server/assets"))
-app.use(express.json())
+const corsOptions = {
+  origin: "https://online-directory-client.onrender.com"
+}
+app.use(express.json());
+app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: false }))
 app.use("/", express.static(__dirname + "/"))
 
