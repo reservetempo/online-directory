@@ -39,7 +39,7 @@ const UpdateDirectory = ({pathArray, getUserObj}) => {
             onChange={e => setTitle(handleTitle(e.target.value))}
             value={title}/>
 
-            {/* <button type="submit" disabled={loading}>add</button> */}
+            <button type="submit" disabled={loading}>add</button>
             <StyledButton onClick={() => setIsAdding(!isAdding)}>x</StyledButton>
         </form>
         }
