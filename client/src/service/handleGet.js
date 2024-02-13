@@ -10,6 +10,6 @@ export const getDirectories = async () => {
 
 export const getDescription = async ({id}) => {
     console.log(id)
-    const result = await fetch(`/images/${id}`);
+    const result = await fetch(`https://online-directory-service.onrender.com/images/${id}`);
     return await result.json();
 };
