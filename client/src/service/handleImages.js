@@ -1,5 +1,5 @@
 export const addImage = async (formData, branch, token) => {
-    const result = await fetch(`/images/${branch}`, {
+    const result = await fetch(`https://online-directory-service.onrender.com/images/${branch}`, {
         method: "POST",
         headers: {
             "Accept": "application/json",
@@ -12,7 +12,7 @@ export const addImage = async (formData, branch, token) => {
 
 export const updateImage = async (branch, text, token) => {
     
-    const result = await fetch(`/images/${branch}`, {
+    const result = await fetch(`https://online-directory-service.onrender.com/images/${branch}`, {
         method: "PATCH",
         headers: {
             "Accept": "application/json",

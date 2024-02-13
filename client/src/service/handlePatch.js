@@ -1,5 +1,5 @@
 export const updateDirectory = async (id, updateObject, token) => {
-    const result = await fetch(`/directories/${id}`, {
+    const result = await fetch(`https://online-directory-service.onrender.com/directories/${id}`, {
         method: "PATCH",
         headers: {
             "Accept": "application/json",

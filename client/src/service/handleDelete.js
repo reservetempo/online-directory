@@ -1,5 +1,5 @@
 export const deleteImage = async (updateObject, token) => {
-    const result = await fetch(`/images`, {
+    const result = await fetch(`https://online-directory-service.onrender.com/images`, {
         method: "DELETE",
         headers: {
             "Accept": "application/json",
