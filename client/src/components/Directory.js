@@ -129,7 +129,7 @@ const Directory = () => {
             })}
             </StyledPath>
             }
-            <Loading loading={loading}/>
+            {!currentDirectory && <Loading loading={loading}/>}
             {params && 
             pathArray[pathArray.length -1][pathArray[pathArray.length -1].length -1] === "." ?
             // --- DISPLAY IMAGE --- 
