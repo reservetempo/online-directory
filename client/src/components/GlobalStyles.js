@@ -19,6 +19,7 @@ body, a{
 
 body, button, input {
     font-family: 'Courier New', Courier, monospace;
+    font-size: large;
 }
 li {
     list-style: none;
