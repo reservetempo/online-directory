@@ -45,7 +45,7 @@ const jwtCheck = auth({
 app.use(morgan("tiny"))
 app.use(express.static("./server/assets"))
 const corsOptions = {
-  origin: "https://online-directory-client.onrender.com"
+  origin: "https://online-directory-client.vercel.app"
 }
 app.use(express.json());
 app.use(cors(corsOptions));
