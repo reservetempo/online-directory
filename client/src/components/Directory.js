@@ -46,9 +46,7 @@ const Directory = () => {
         const interval = setInterval(() => {
             const remainder = 51000 - (Date.now() - start);
             if (remainder >= 0){
-                let seconds = Math.floor((remainder / 1000) % 60);
-                let milliseconds = Math.floor(remainder % 1000);
-
+                let seconds = Math.floor((remainder / 1000) % 60);   
                 seconds = (seconds < 10) ? "0" + seconds : seconds;
                 setLoading(`Booting up server, ${seconds} seconds left`)
             } else {
@@ -153,7 +151,6 @@ const Directory = () => {
                     currentFolder[e].map(e => {
                         return (
                             <li key={e.publicId} style={{display: deletingElement === e.publicId ? "none" : "block"}}>
-                                {/* <img src={e.imgSrc} style={{height: "20px"}}/> */}
                                 <StyledLink to={`/${pathArray.length ? pathArray.join("/")+ "/" + e.title : e.title}`}>░▒ {e.title}</StyledLink>
                                 {isEditing && <StyledX onClick={(ev) => handleDeleteImg(ev, e.publicId)}>x</StyledX>}
                             </li>
