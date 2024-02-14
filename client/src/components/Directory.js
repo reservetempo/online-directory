@@ -40,17 +40,42 @@ const Directory = () => {
         }
         return current;
     }
+    const countdown = () => {
+        const start = Date.now();
 
+        const interval = setInterval(() => {
+            const remainder = 51000 - (Date.now() - start);
+            if (remainder >= 0){
+                let seconds = Math.floor((remainder / 1000) % 60);
+                let milliseconds = Math.floor(remainder % 1000);
+
+                seconds = (seconds < 10) ? "0" + seconds : seconds;
+                setLoading(`Booting up server, ${seconds} seconds left`)
+            } else {
+                clearInterval(interval);
+                setLoading(`Booting up server 00`)
+            }
+        }, 500) 
+    }
 
 
     const getUserObj = async () => {
         const result = await makeFetchRequest(() => getDirectory(pathArray[0]));
-        updateCurrentDirectory(result.data.userObj)
+        if (result) {
+            updateCurrentDirectory(result.data.userObj);
+            setLoading(null);
+        }
     };
 
     useEffect(() => {
         if (!currentDirectory || !currentDirectory[pathArray[0]]) {
+            setLoading("Sending a request to the server");
             getUserObj();
+
+            setTimeout(() => {
+                countdown();
+            }, 5000)
+
         }
     }, [])
 
